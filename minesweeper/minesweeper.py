@@ -168,17 +168,32 @@ class MinesweeperAI():
         self.mark_safe(cell)
         
         # 3) Add new sentence to knowledge base
-        neighbors = set()
+        # First, get ALL neighbors
+        all_neighbors = set()
         for i in range(cell[0] - 1, cell[0] + 2):
             for j in range(cell[1] - 1, cell[1] + 2):
                 if (i, j) == cell:
                     continue
                 if 0 <= i < self.height and 0 <= j < self.width:
-                    if (i, j) not in self.safes and (i, j) not in self.mines:
-                        neighbors.add((i, j))
+                    all_neighbors.add((i, j))
         
-        new_sentence = Sentence(neighbors, count)
-        self.knowledge.append(new_sentence)
+        # Separate known mines and unknown cells
+        known_mine_count = 0
+        unknown_neighbors = set()
+        for neighbor in all_neighbors:
+            if neighbor in self.mines:
+                known_mine_count += 1
+            elif neighbor not in self.safes:
+                unknown_neighbors.add(neighbor)
+        
+        # Create sentence with adjusted count
+        new_count = count - known_mine_count
+        if len(unknown_neighbors) > 0:
+            new_sentence = Sentence(unknown_neighbors, new_count)
+            self.knowledge.append(new_sentence)
+        else:
+            # If all neighbors are known, nothing new to add
+            pass
         
         # 4) & 5) Mark cells and infer new sentences
         new_inferences = True
