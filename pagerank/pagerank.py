@@ -22,11 +22,6 @@ def main():
 
 
 def crawl(directory):
-    """
-    Parse a directory of HTML pages and check for links to other pages.
-    Return a dictionary where each key is a page, and values are
-    a list of all other pages in the corpus that are linked to by the page.
-    """
     pages = dict()
 
     # Extract all links from HTML files
@@ -46,7 +41,6 @@ def crawl(directory):
         )
 
     return pages
-
 
 def transition_model(corpus, page, damping_factor):
     result = {}
@@ -70,7 +64,6 @@ def transition_model(corpus, page, damping_factor):
             result[p] = link_probability + random_probability
     
     return result
-
 
 def sample_pagerank(corpus, damping_factor, n):
     counts = {page: 0 for page in corpus}
